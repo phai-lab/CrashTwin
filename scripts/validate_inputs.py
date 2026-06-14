@@ -13,13 +13,13 @@ from crashtwin.io import format_scan_errors, read_benchmark, scan_prediction_fol
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Validate CrashTwin prediction video names.")
+    parser = argparse.ArgumentParser(description="Validate generated videos for CrashTwin-Eval.")
     parser.add_argument("--predictions", required=True, type=Path, help="Folder of generated .mp4 files.")
     parser.add_argument(
         "--benchmark",
-        default=REPO_ROOT / "benchmark" / "crashtwin_344.csv",
+        default=REPO_ROOT / "benchmark" / "crashtwin_eval.csv",
         type=Path,
-        help="CrashTwin benchmark CSV.",
+        help="CrashTwin-Eval manifest CSV.",
     )
     parser.add_argument("--output-csv", type=Path, help="Optional validation report path.")
     return parser.parse_args()
@@ -46,4 +46,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

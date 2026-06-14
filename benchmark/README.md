@@ -1,9 +1,9 @@
-# CrashTwin-344 Benchmark Files
+# CrashTwin-Eval Benchmark Files
 
-`crashtwin_344.csv` contains the fixed public evaluation split.
+`crashtwin_eval.csv` contains the fixed CrashTwin-Eval manifest.
 
-Download the CrashTwin-344 metadata package and unzip it at the repository root.
-After extraction, this directory should contain:
+Download the released CrashTwin-Eval files and unpack them at the repository
+root. After extraction, this directory should contain:
 
 ```text
 auto_json/<video_id>_auto.json

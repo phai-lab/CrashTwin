@@ -11,13 +11,13 @@ from pathlib import Path
 
 REPO_ROOT = Path("/crashtwin")
 CENTERTRACK = REPO_ROOT / "third_party" / "centertrack"
-DEFAULT_WEIGHTS = REPO_ROOT / "artifacts" / "weights"
+DEFAULT_CHECKPOINT_DIR = REPO_ROOT / "checkpoints"
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run CrashTwin 3D reconstruction inside Docker.")
     parser.add_argument("--benchmark", required=True, type=Path)
-    parser.add_argument("--metadata-root", required=True, type=Path)
+    parser.add_argument("--benchmark-root", required=True, type=Path)
     parser.add_argument("--per-video-dir", required=True, type=Path)
     parser.add_argument("--config", required=True, type=Path)
     parser.add_argument("--gpus", default="0")
@@ -103,8 +103,8 @@ def main() -> int:
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpus
     os.environ["NVIDIA_VISIBLE_DEVICES"] = args.gpus
 
-    weights = Path(os.environ.get("CRASHTWIN_WEIGHTS_DIR", str(DEFAULT_WEIGHTS)))
-    centertrack_model = weights / "nuScenes_3Dtracking.pth"
+    checkpoint_dir = Path(os.environ.get("CRASHTWIN_CHECKPOINT_DIR", str(DEFAULT_CHECKPOINT_DIR)))
+    centertrack_model = checkpoint_dir / "nuScenes_3Dtracking.pth"
     require_file(centertrack_model, "CenterTrack checkpoint")
 
     video_ids = read_video_ids(args.benchmark)

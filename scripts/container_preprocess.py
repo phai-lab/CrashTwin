@@ -13,14 +13,14 @@ REPO_ROOT = Path("/crashtwin")
 THIRD_PARTY = REPO_ROOT / "third_party"
 DEFAULT_CONDA_ENVS = Path("/workspace/conda_envs")
 DEFAULT_DROID_ENV = Path("/root/miniconda3/envs/droid_metric")
-DEFAULT_WEIGHTS = REPO_ROOT / "artifacts" / "weights"
+DEFAULT_CHECKPOINT_DIR = REPO_ROOT / "checkpoints"
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run CrashTwin preprocessing inside Docker.")
     parser.add_argument("--inputs", required=True, type=Path)
     parser.add_argument("--benchmark", required=True, type=Path)
-    parser.add_argument("--metadata-root", required=True, type=Path)
+    parser.add_argument("--benchmark-root", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument("--config", required=True, type=Path)
     parser.add_argument("--gpus", default="0")
@@ -59,7 +59,7 @@ def main() -> int:
     os.environ["NVIDIA_VISIBLE_DEVICES"] = args.gpus
 
     conda_envs = Path(os.environ.get("CRASHTWIN_CONDA_ENVS", str(DEFAULT_CONDA_ENVS)))
-    weights = Path(os.environ.get("CRASHTWIN_WEIGHTS_DIR", str(DEFAULT_WEIGHTS)))
+    checkpoint_dir = Path(os.environ.get("CRASHTWIN_CHECKPOINT_DIR", str(DEFAULT_CHECKPOINT_DIR)))
     sam2_python = conda_envs / "sam2" / "bin" / "python"
     searaft_python = conda_envs / "searaft" / "bin" / "python"
     mapanything_python = conda_envs / "mapanything" / "bin" / "python"
@@ -69,8 +69,8 @@ def main() -> int:
     require_executable(searaft_python, "SEA-RAFT Python environment")
     require_executable(mapanything_python, "MapAnything Python environment")
     require_executable(droid_python, "DROID/Metric3D Python environment")
-    require_file(weights / "metric_depth_vit_giant2_800k.pth", "Metric3D checkpoint")
-    require_file(weights / "droid.pth", "DROID-SLAM checkpoint")
+    require_file(checkpoint_dir / "metric_depth_vit_giant2_800k.pth", "Metric3D checkpoint")
+    require_file(checkpoint_dir / "droid.pth", "DROID-SLAM checkpoint")
 
     video_ids = read_video_ids(args.benchmark)
     if args.limit is not None:
@@ -82,8 +82,13 @@ def main() -> int:
         save.mkdir(parents=True, exist_ok=True)
 
         src_video = args.inputs / f"{video_id}.mp4"
-        src_auto = args.metadata_root / "benchmark" / "auto_json" / f"{video_id}_auto.json"
-        src_specs = args.metadata_root / "benchmark" / "vehicle_specs" / f"{video_id}_vehicle_specs.json"
+        src_auto = args.benchmark_root / "benchmark" / "auto_json" / f"{video_id}_auto.json"
+        src_specs = (
+            args.benchmark_root
+            / "benchmark"
+            / "vehicle_specs"
+            / f"{video_id}_vehicle_specs.json"
+        )
         require_file(src_video, "input video")
         require_file(src_auto, "auto_json")
         require_file(src_specs, "vehicle_specs")
@@ -174,7 +179,7 @@ def main() -> int:
                 "--intr",
                 str(save / f"intrinsic_{video_id}.txt"),
                 "--checkpoint",
-                str(weights / "metric_depth_vit_giant2_800k.pth"),
+                str(checkpoint_dir / "metric_depth_vit_giant2_800k.pth"),
             ],
             cwd=THIRD_PARTY / "droid_metric",
         )
@@ -191,7 +196,7 @@ def main() -> int:
                 "--out-poses",
                 str(poses_dir),
                 "--checkpoint",
-                str(weights / "droid.pth"),
+                str(checkpoint_dir / "droid.pth"),
             ],
             cwd=THIRD_PARTY / "droid_metric",
         )

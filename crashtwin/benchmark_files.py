@@ -8,9 +8,9 @@ from .io import BenchmarkItem
 
 
 @dataclass(frozen=True)
-class MetadataScan:
+class BenchmarkFileScan:
     benchmark: tuple[BenchmarkItem, ...]
-    metadata_root: Path
+    benchmark_root: Path
     missing_auto_json: tuple[str, ...]
     missing_vehicle_specs: tuple[str, ...]
 
@@ -19,8 +19,10 @@ class MetadataScan:
         return bool(self.missing_auto_json or self.missing_vehicle_specs)
 
 
-def scan_metadata(metadata_root: Path | str, benchmark: tuple[BenchmarkItem, ...]) -> MetadataScan:
-    root = Path(metadata_root)
+def scan_benchmark_files(
+    benchmark_root: Path | str, benchmark: tuple[BenchmarkItem, ...]
+) -> BenchmarkFileScan:
+    root = Path(benchmark_root)
     missing_auto_json: list[str] = []
     missing_vehicle_specs: list[str] = []
 
@@ -34,15 +36,15 @@ def scan_metadata(metadata_root: Path | str, benchmark: tuple[BenchmarkItem, ...
         if not vehicle_specs.is_file():
             missing_vehicle_specs.append(item.video_id)
 
-    return MetadataScan(
+    return BenchmarkFileScan(
         benchmark=benchmark,
-        metadata_root=root,
+        benchmark_root=root,
         missing_auto_json=tuple(missing_auto_json),
         missing_vehicle_specs=tuple(missing_vehicle_specs),
     )
 
 
-def format_metadata_errors(scan: MetadataScan) -> str:
+def format_benchmark_file_errors(scan: BenchmarkFileScan) -> str:
     lines: list[str] = []
     if scan.missing_auto_json:
         lines.append(f"Missing auto_json files: {len(scan.missing_auto_json)}")
@@ -57,7 +59,7 @@ def format_metadata_errors(scan: MetadataScan) -> str:
     return "\n".join(lines)
 
 
-def write_metadata_report(scan: MetadataScan, output_csv: Path | str) -> None:
+def write_benchmark_file_report(scan: BenchmarkFileScan, output_csv: Path | str) -> None:
     output_path = Path(output_csv)
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -81,4 +83,3 @@ def write_metadata_report(scan: MetadataScan, output_csv: Path | str) -> None:
                     "status": "ok" if auto_ok and specs_ok else "missing",
                 }
             )
-

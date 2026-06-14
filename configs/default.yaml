@@ -1,4 +1,4 @@
-benchmark: CrashTwin-344
+benchmark: CrashTwin-Eval
 
 video:
   target_fps: 30
@@ -27,4 +27,3 @@ scoring:
     - J_E
     - S_ID
     - D_ad
-

@@ -16,21 +16,25 @@ from crashtwin.io import (  # noqa: E402
     stage_predictions,
     write_validation_report,
 )
-from crashtwin.metadata import format_metadata_errors, scan_metadata, write_metadata_report  # noqa: E402
+from crashtwin.benchmark_files import (  # noqa: E402
+    format_benchmark_file_errors,
+    scan_benchmark_files,
+    write_benchmark_file_report,
+)
 from crashtwin.preprocess import run_preprocess  # noqa: E402
 from crashtwin.reconstruct import run_reconstruction  # noqa: E402
 from crashtwin.scoring import collect_scores  # noqa: E402
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Run CrashTwin evaluation for one method.")
-    parser.add_argument("--method-name", required=True, help="Name used in output tables.")
+    parser = argparse.ArgumentParser(description="Run CrashTwin-Eval for one generated-video model.")
+    parser.add_argument("--method-name", required=True, help="Model name used in output tables.")
     parser.add_argument("--predictions", required=True, type=Path, help="Folder of generated .mp4 files.")
     parser.add_argument(
         "--benchmark",
-        default=REPO_ROOT / "benchmark" / "crashtwin_344.csv",
+        default=REPO_ROOT / "benchmark" / "crashtwin_eval.csv",
         type=Path,
-        help="CrashTwin benchmark CSV.",
+        help="CrashTwin-Eval manifest CSV.",
     )
     parser.add_argument(
         "--config",
@@ -40,10 +44,10 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--output", required=True, type=Path, help="Output folder.")
     parser.add_argument(
-        "--metadata-root",
+        "--benchmark-root",
         default=REPO_ROOT,
         type=Path,
-        help="Toolkit root containing benchmark metadata files.",
+        help="Repository root containing CrashTwin-Eval benchmark files.",
     )
     parser.add_argument("--gpus", default="0", help="Comma-separated GPU IDs passed to Docker.")
     parser.add_argument(
@@ -70,11 +74,16 @@ def main() -> int:
         print(f"Validation report: {args.output / 'input_validation.csv'}", file=sys.stderr)
         return 2
 
-    metadata_scan = scan_metadata(args.metadata_root, benchmark)
-    write_metadata_report(metadata_scan, args.output / "metadata_validation.csv")
-    if metadata_scan.has_errors:
-        print(format_metadata_errors(metadata_scan), file=sys.stderr)
-        print(f"Metadata report: {args.output / 'metadata_validation.csv'}", file=sys.stderr)
+    benchmark_file_scan = scan_benchmark_files(args.benchmark_root, benchmark)
+    write_benchmark_file_report(
+        benchmark_file_scan, args.output / "benchmark_file_validation.csv"
+    )
+    if benchmark_file_scan.has_errors:
+        print(format_benchmark_file_errors(benchmark_file_scan), file=sys.stderr)
+        print(
+            f"Benchmark-file report: {args.output / 'benchmark_file_validation.csv'}",
+            file=sys.stderr,
+        )
         return 2
 
     staged_inputs = stage_predictions(scan, args.output / "staged_inputs", copy_mode=args.copy_mode)
@@ -86,7 +95,7 @@ def main() -> int:
             repo_root=REPO_ROOT,
             inputs=staged_inputs,
             benchmark=args.benchmark,
-            metadata_root=args.metadata_root,
+            benchmark_root=args.benchmark_root,
             output=per_video_dir,
             config=args.config,
             gpus=args.gpus,
@@ -96,7 +105,7 @@ def main() -> int:
         run_reconstruction(
             repo_root=REPO_ROOT,
             benchmark=args.benchmark,
-            metadata_root=args.metadata_root,
+            benchmark_root=args.benchmark_root,
             per_video_dir=per_video_dir,
             config=args.config,
             gpus=args.gpus,

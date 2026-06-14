@@ -1,20 +1,24 @@
 # CrashTwin
 
-Official code for **CrashTwin**. Given generated crash videos on the fixed
-CrashTwin-344 benchmark split, this repository reconstructs metric-scale
-collision dynamics and reports the seven physics-grounded metrics used in the
-paper.
+Official code for **CrashTwin**, a physics-grounded evaluation framework for
+world-model video rollouts. Given generated collision videos on the
+**CrashTwin-Eval** split, this repository reconstructs metric-scale physical
+attributes from monocular videos and reports the seven diagnostic metrics used in
+the paper.
 
-The evaluator is designed for comparing video generation methods. Users provide
-generated videos and the released benchmark metadata package; camera processing,
-3D reconstruction, and metric computation are handled by the toolkit.
+CrashTwin evaluates three dimensions of physical plausibility: spatio-temporal
+consistency, momentum and kinetic-energy conservation, and interaction-dynamics
+integrity. Users provide generated videos and the released CrashTwin-Eval
+benchmark files; the toolkit handles camera processing, 3D reconstruction, and
+metric computation.
 
 ## Requirements
 
 - Linux server with NVIDIA GPU support
 - Docker with NVIDIA Container Toolkit
 - Python 3.10 or newer for the lightweight launcher scripts
-- The released CrashTwin-344 metadata package and model artifacts
+- Released CrashTwin-Eval benchmark files
+- Required model checkpoints
 
 No local Docker build is required for normal evaluation.
 
@@ -24,21 +28,21 @@ No local Docker build is required for normal evaluation.
 git clone https://github.com/phai-lab/CrashTwin.git
 cd CrashTwin
 
-# Download the metadata package, then:
-unzip crashtwin_344_metadata_draft-20260613.zip -d .
+# Download and unpack the released CrashTwin-Eval benchmark files at the repo root.
+unzip crashtwin_eval_files.zip -d .
 
-# Place required model files under artifacts/weights/.
+# Place required model checkpoints under checkpoints/.
 
-python scripts/validate_metadata.py
-python scripts/validate_inputs.py --predictions predictions/<method_name>
+python scripts/validate_benchmark_files.py
+python scripts/validate_inputs.py --predictions predictions/<model_name>
 
 docker pull nuochen1203/crashtwin-preprocess:draft-20260614-env
 docker pull nuochen1203/crashtwin-reconstruct:draft-20260613
 
 python scripts/evaluate.py \
-  --method-name <method_name> \
-  --predictions predictions/<method_name> \
-  --output outputs/<method_name> \
+  --method-name <model_name> \
+  --predictions predictions/<model_name> \
+  --output outputs/<model_name> \
   --gpus 0
 ```
 
@@ -47,9 +51,9 @@ python scripts/evaluate.py \
 ```text
 CrashTwin/
 ├── assets/                         # README figures and examples
-├── benchmark/                      # fixed CrashTwin-344 benchmark files
-│   ├── crashtwin_344.csv            # evaluation video IDs and split labels
-│   ├── auto_json/                   # per-video two-vehicle initialization metadata
+├── benchmark/                      # CrashTwin-Eval benchmark files
+│   ├── crashtwin_eval.csv           # evaluation video IDs and split labels
+│   ├── auto_json/                   # per-video two-vehicle initialization files
 │   └── vehicle_specs/               # per-video vehicle roles, dimensions, and masses
 ├── crashtwin/                       # evaluation package
 │   ├── preprocess.py                # video normalization, masks, intrinsics, depth, SLAM
@@ -60,7 +64,7 @@ CrashTwin/
 ├── scripts/
 │   ├── evaluate.py                  # one-command evaluation entry point
 │   ├── validate_inputs.py           # check generated videos before evaluation
-│   ├── validate_metadata.py         # check benchmark metadata after download
+│   ├── validate_benchmark_files.py  # check benchmark files after download
 │   ├── export_report.py             # optional report/table exporter
 │   └── smoke_test.py                # maintainer/user environment smoke test
 ├── configs/
@@ -74,60 +78,38 @@ CrashTwin/
 └── README.md
 ```
 
-## Input Videos
+## Generated Videos
 
-Place all generated videos for one method under a single folder:
+Place all generated videos for one model under a single folder:
 
 ```text
 predictions/
-└── <method_name>/
-    ├── VV_7107.mp4
-    ├── VV_7109.mp4
-    ├── ...
-    └── Video035clip0033.mp4
+└── <model_name>/
+    ├── <video_id>.mp4
+    ├── <video_id>.mp4
+    └── ...
 ```
 
 The expected video IDs are listed in:
 
 ```text
-benchmark/crashtwin_344.csv
+benchmark/crashtwin_eval.csv
 ```
 
 Rules:
 
-1. Provide one `.mp4` for each video ID in CrashTwin-344.
-2. Keep benchmark IDs unchanged, for example `VV_7107` and `Video031clip0029`.
+1. Provide one `.mp4` for each `video_id` in the CrashTwin-Eval manifest.
+2. Keep the `video_id` unchanged.
 3. Videos may use any resolution or frame rate; the evaluator normalizes them internally.
 4. Camera intrinsics are estimated from each input video. No fixed intrinsics are required from the user.
 
-The canonical public input name is:
+## Benchmark Files And Checkpoints
 
-```text
-<video_id>.mp4
-```
-
-The evaluator also accepts generated outputs that keep the long-form raw name:
-
-```text
-<video_id>__<six_digit_index>_<real|syn>_test_<video_id>__output.mp4
-```
-
-Examples:
-
-```text
-<video_id>__000000_real_test_<video_id>__output.mp4
-<video_id>__000001_syn_test_<video_id>__output.mp4
-```
-
-Long-form names are normalized internally to the benchmark video ID before
-scoring.
-
-## Benchmark Metadata And Model Files
-
-Download the CrashTwin-344 metadata package and unzip it at the repository root:
+Download the released CrashTwin-Eval benchmark files and unpack them at the
+repository root:
 
 ```bash
-unzip crashtwin_344_metadata_draft-20260613.zip -d .
+unzip crashtwin_eval_files.zip -d .
 ```
 
 After extraction, the repository should contain:
@@ -137,28 +119,28 @@ benchmark/auto_json/
 benchmark/vehicle_specs/
 ```
 
-Validate the metadata:
+Validate the benchmark files:
 
 ```bash
-python scripts/validate_metadata.py
+python scripts/validate_benchmark_files.py
 ```
 
-These files define the two evaluated vehicles in each clip, their roles, and the
-physical parameters used by the collision metrics. Do not modify these files when
-comparing methods.
+These files define the two evaluated collision actors in each clip, their roles,
+and the physical parameters used by the diagnostic metrics. Do not modify them
+when comparing models.
 
-Place model files under:
+Place model checkpoints under:
 
 ```text
-artifacts/weights/
+checkpoints/
 ```
 
-Expected model files:
+Expected checkpoint files:
 
 ```text
-artifacts/weights/metric_depth_vit_giant2_800k.pth
-artifacts/weights/droid.pth
-artifacts/weights/nuScenes_3Dtracking.pth
+checkpoints/metric_depth_vit_giant2_800k.pth
+checkpoints/droid.pth
+checkpoints/nuScenes_3Dtracking.pth
 ```
 
 SAM2, MapAnything, SEA-RAFT, and OpenCLIP may also use their upstream Hugging
@@ -174,12 +156,6 @@ docker pull nuochen1203/crashtwin-preprocess:draft-20260614-env
 docker pull nuochen1203/crashtwin-reconstruct:draft-20260613
 ```
 
-The compose file points to these images:
-
-```text
-docker/docker-compose.yaml
-```
-
 The Docker images provide the runtime environments. The evaluation code is in
 this repository and is mounted into the containers at runtime.
 
@@ -187,13 +163,13 @@ No local Docker build is required for normal evaluation.
 
 ## Run Evaluation
 
-Evaluate one method with a single command:
+Evaluate one model with a single command:
 
 ```bash
 python scripts/evaluate.py \
-  --method-name <method_name> \
-  --predictions predictions/<method_name> \
-  --output outputs/<method_name> \
+  --method-name <model_name> \
+  --predictions predictions/<model_name> \
+  --output outputs/<model_name> \
   --gpus 0,1,2,3
 ```
 
@@ -216,7 +192,7 @@ input videos
 All intermediate files and final results are written under:
 
 ```text
-outputs/<method_name>/
+outputs/<model_name>/
 ```
 
 ## Output Files
@@ -224,7 +200,7 @@ outputs/<method_name>/
 After evaluation, the output folder contains:
 
 ```text
-outputs/<method_name>/
+outputs/<model_name>/
 ├── per_video/
 │   └── <video_id>/
 │       ├── normalized.mp4
@@ -272,12 +248,12 @@ real,...
 ## Validate Inputs
 
 Before running the full evaluation, check that the input folder matches
-CrashTwin-344:
+CrashTwin-Eval:
 
 ```bash
 python scripts/validate_inputs.py \
-  --predictions predictions/<method_name> \
-  --benchmark benchmark/crashtwin_344.csv
+  --predictions predictions/<model_name> \
+  --benchmark benchmark/crashtwin_eval.csv
 ```
 
 The validator reports missing, duplicated, or incorrectly named videos.
@@ -285,13 +261,13 @@ The validator reports missing, duplicated, or incorrectly named videos.
 If a clip fails during evaluation, it is listed in:
 
 ```text
-outputs/<method_name>/failed_videos.csv
+outputs/<model_name>/failed_videos.csv
 ```
 
 ## Troubleshooting
 
-If metadata validation fails, re-download and unzip the metadata package at the
-repository root. The expected files are:
+If benchmark-file validation fails, re-download and unpack the released
+CrashTwin-Eval files at the repository root. The expected files are:
 
 ```text
 benchmark/auto_json/<video_id>_auto.json
@@ -307,6 +283,6 @@ folder. Existing intermediate files can be reused by passing
 
 ## Reproducibility
 
-All reported comparisons should use the same released benchmark files, config,
-and Docker image versions. The public output format uses only the metric names
-from the paper.
+All reported comparisons should use the same released CrashTwin-Eval files,
+config, and Docker image versions. The public output format uses only the metric
+names from the paper.

@@ -20,10 +20,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--predictions", required=True, type=Path, help="Folder of generated videos.")
     parser.add_argument("--output", required=True, type=Path, help="Smoke output folder.")
     parser.add_argument(
-        "--metadata-root",
+        "--benchmark-root",
         default=REPO_ROOT,
         type=Path,
-        help="Toolkit root containing benchmark metadata files.",
+        help="Repository root containing CrashTwin-Eval benchmark files.",
     )
     parser.add_argument("--gpus", default="0", help="GPU IDs for dry-run command rendering.")
     return parser.parse_args()
@@ -31,7 +31,7 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
-    benchmark = REPO_ROOT / "benchmark" / "crashtwin_344.csv"
+    benchmark = REPO_ROOT / "benchmark" / "crashtwin_eval.csv"
 
     run(
         [
@@ -51,13 +51,13 @@ def main() -> int:
         [
             sys.executable,
             "-B",
-            "scripts/validate_metadata.py",
-            "--metadata-root",
-            str(args.metadata_root),
+            "scripts/validate_benchmark_files.py",
+            "--benchmark-root",
+            str(args.benchmark_root),
             "--benchmark",
             str(benchmark),
             "--output-csv",
-            str(args.output / "metadata_validation.csv"),
+            str(args.output / "benchmark_file_validation.csv"),
         ]
     )
 
@@ -74,8 +74,8 @@ def main() -> int:
             str(benchmark),
             "--output",
             str(args.output),
-            "--metadata-root",
-            str(args.metadata_root),
+            "--benchmark-root",
+            str(args.benchmark_root),
             "--gpus",
             args.gpus,
             "--dry-run",

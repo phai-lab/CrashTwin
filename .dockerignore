@@ -10,7 +10,7 @@ examples/predictions/*.mp4
 _internal_notes
 cluster_release
 crashtwin_cluster_release
-artifacts
+checkpoints
 benchmark/auto_json/*.json
 benchmark/vehicle_specs/*.json
 third_party/**/weights
