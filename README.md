@@ -11,22 +11,33 @@ actors needed by the evaluation protocol.
 
 ## Installation
 
-Clone the repository and pull the released Docker environments:
+Clone the repository and pull the released Docker environments. The host machine
+only needs Bash, Docker, and NVIDIA Container Toolkit; all CrashTwin Python code
+runs inside Docker.
 
 ```bash
 git clone https://github.com/phai-lab/CrashTwin.git
 cd CrashTwin
 
-docker pull nuochen1203/crashtwin-preprocess:draft-20260614-env
-docker pull nuochen1203/crashtwin-reconstruct:draft-20260613
+docker pull nuochen1203/crashtwin-preprocess:draft-20260614-runtime
+docker pull nuochen1203/crashtwin-reconstruct:draft-20260614-runtime
 ```
 
-Download the released CrashTwin-Eval files and model checkpoints, then place
-them using the layout below. For the public release, Hugging Face is preferred
-over Google Drive because it provides stable versioned files and command-line
-downloads; Google Drive is best kept as a temporary mirror.
+Download the CrashTwin-Eval files and model checkpoints from Hugging Face:
+https://huggingface.co/datasets/nnuochen/crashtwin_eval
+
+From the repository root:
+
+```bash
+huggingface-cli download nnuochen/crashtwin_eval \
+  --repo-type dataset \
+  --local-dir .
+```
 
 ## Data Layout
+
+Place the downloaded benchmark files, checkpoints, and one model's generated
+videos under the repository root:
 
 ```text
 CrashTwin/
@@ -39,7 +50,9 @@ CrashTwin/
 ├── checkpoints/
 │   ├── metric_depth_vit_giant2_800k.pth
 │   ├── droid.pth
-│   └── nuScenes_3Dtracking.pth
+│   ├── nuScenes_3Dtracking.pth
+│   └── searaft/
+│       └── Tartan-C-T-TSKH-kitti432x960-M.pth
 └── predictions/
     └── <model_name>/
         ├── <video_id>.mp4
@@ -54,18 +67,23 @@ do not need to provide fixed camera parameters.
 
 ## Run Evaluation
 
-Evaluate one model with:
+Evaluate one model from the host with:
 
 ```bash
-python scripts/evaluate.py \
+bash scripts/evaluate.sh \
   --method-name <model_name> \
   --predictions predictions/<model_name> \
   --output outputs/<model_name> \
   --gpus 0,1,2,3
 ```
 
-Use `--gpus 0` for a single GPU, or pass a comma-separated list such as
-`--gpus 0,1,2,3` for multiple GPUs.
+`scripts/evaluate.sh` starts the released Docker images with `docker run`. It
+mounts the repository root to `/crashtwin` in each container, so `benchmark/`,
+`checkpoints/`, `predictions/`, and `outputs/` must all live inside the cloned
+repository. Use `--gpus 0` for a single GPU, or pass a comma-separated list such
+as `--gpus 0,1,2,3` for multiple GPUs. For multi-GPU runs, the script splits the
+benchmark rows across GPUs and starts one Docker container per GPU; logs are
+written to `outputs/<model_name>/logs/`.
 
 ## Outputs
 
@@ -81,3 +99,13 @@ outputs/<model_name>/
 `summary_metrics.csv` reports the aggregate CrashTwin-Eval scores for all,
 synthetic, and real-world subsets. Per-video intermediate reconstruction files
 are stored under `outputs/<model_name>/per_video/`.
+
+## Acknowledgements
+
+This code builds on several open-source projects: DROID-SLAM and Metric3D for
+camera motion and metric depth reconstruction, MapAnything for intrinsic
+estimation, SAM 2 for video object segmentation, SEA-RAFT for optical flow,
+CenterTrack for monocular 3D vehicle detection and tracking, and OpenCLIP for
+appearance-feature extraction. We thank the authors of these projects for
+releasing their code and models. Please refer to the corresponding files under
+`third_party/` for the original licenses and notices.
