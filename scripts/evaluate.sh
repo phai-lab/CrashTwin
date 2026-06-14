@@ -7,6 +7,7 @@ REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 PREPROCESS_IMAGE="${CRASHTWIN_PREPROCESS_IMAGE:-nuochen1203/crashtwin-preprocess:v1.0.0}"
 RECONSTRUCT_IMAGE="${CRASHTWIN_RECONSTRUCT_IMAGE:-nuochen1203/crashtwin-reconstruct:v1.0.0}"
 CACHE_DIR="${CRASHTWIN_CACHE_DIR:-${REPO_ROOT}/.cache}"
+RECONSTRUCT_PYTHON="${CRASHTWIN_RECONSTRUCT_PYTHON:-/opt/conda/bin/python}"
 
 METHOD_NAME=""
 PREDICTIONS=""
@@ -270,7 +271,7 @@ if [[ "${SKIP_RECONSTRUCTION}" == "0" ]]; then
     log_file="${LOG_DIR}/reconstruct_gpu_${gpu}.log"
     RECONSTRUCT_LOGS+=("${log_file}")
     launch_docker "${log_file}" "${gpu}" "${RECONSTRUCT_IMAGE}" \
-      python3 /crashtwin/scripts/container_reconstruct.py \
+      "${RECONSTRUCT_PYTHON}" /crashtwin/scripts/container_reconstruct.py \
       --benchmark "$(container_path "${SHARD_DIR}/benchmark_shard_${index}.csv")" \
       --benchmark-root "$(container_path "${BENCHMARK_ROOT}")" \
       --per-video-dir "$(container_path "${OUTPUT}/per_video")" \
@@ -284,7 +285,7 @@ if [[ "${SKIP_RECONSTRUCTION}" == "0" ]]; then
 fi
 
 run_docker "${GPU_LIST[0]}" "${RECONSTRUCT_IMAGE}" \
-  python3 /crashtwin/scripts/container_score.py \
+  "${RECONSTRUCT_PYTHON}" /crashtwin/scripts/container_score.py \
   --benchmark "$(container_path "${BENCHMARK}")" \
   --per-video-dir "$(container_path "${OUTPUT}/per_video")" \
   --output "$(container_path "${OUTPUT}")"

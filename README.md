@@ -13,7 +13,8 @@ actors needed by the evaluation protocol.
 
 Clone the repository and pull the released Docker environments. The host machine
 only needs Bash, Docker, and NVIDIA Container Toolkit; all CrashTwin Python code
-runs inside Docker.
+runs inside Docker. The launch script selects the bundled Python environments
+inside each image automatically.
 
 ```bash
 git clone https://github.com/phai-lab/CrashTwin.git

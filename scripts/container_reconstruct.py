@@ -6,12 +6,14 @@ import csv
 import json
 import os
 import subprocess
+import sys
 from pathlib import Path
 
 
 REPO_ROOT = Path("/crashtwin")
 CENTERTRACK = REPO_ROOT / "third_party" / "centertrack"
 DEFAULT_CHECKPOINT_DIR = REPO_ROOT / "checkpoints"
+PYTHON = sys.executable
 
 
 def parse_args() -> argparse.Namespace:
@@ -132,7 +134,7 @@ def main() -> int:
         focal_length = read_focal_length(intrinsic)
         run(
             [
-                "python3",
+                PYTHON,
                 "demo.py",
                 "tracking,ddd",
                 "--load_model",
@@ -159,7 +161,7 @@ def main() -> int:
         )
         run(
             [
-                "python3",
+                PYTHON,
                 "visualize_tracking.py",
                 str(detections),
                 str(video),
@@ -171,7 +173,7 @@ def main() -> int:
         )
         run(
             [
-                "python3",
+                PYTHON,
                 "traj_recon_tr_rot.py",
                 "--video_id",
                 video_id,
@@ -215,7 +217,7 @@ def main() -> int:
         ]
         run(
             [
-                "python3",
+                PYTHON,
                 "check_first_contact_collision.py",
                 "--kalman-json",
                 str(kalman),
@@ -231,7 +233,7 @@ def main() -> int:
         )
         run(
             [
-                "python3",
+                PYTHON,
                 "momentum_residual_windo_per_dir_col_l2.py",
                 *common,
                 "--j-output",
@@ -243,7 +245,7 @@ def main() -> int:
         )
         run(
             [
-                "python3",
+                PYTHON,
                 "angular_momentum_residual_windo_per_dir_col.py",
                 *common,
                 "--j-output",
@@ -255,7 +257,7 @@ def main() -> int:
         )
         run(
             [
-                "python3",
+                PYTHON,
                 "motion_bounds_check.py",
                 "--kalman-json",
                 str(kalman),
