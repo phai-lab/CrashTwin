@@ -71,28 +71,23 @@ def collect_scores(
 
 
 def _write_summary(rows: list[dict[str, object]], output_csv: Path) -> None:
-    fieldnames = ["split", *METRIC_NAMES, "num_videos", "num_failed"]
-    splits = ["all", "synthetic", "real"]
+    fieldnames = [*METRIC_NAMES, "num_videos", "num_failed"]
     with output_csv.open("w", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=fieldnames)
         writer.writeheader()
-        for split_name in splits:
-            split_rows = rows if split_name == "all" else [row for row in rows if row["split"] == split_name]
-            if not split_rows:
-                continue
-            summary: dict[str, object] = {"split": split_name}
-            for metric in METRIC_NAMES:
-                values = [_as_float(row.get(metric)) for row in split_rows]
-                valid = [value for value in values if value is not None]
-                summary[metric] = sum(valid) / len(valid) if valid else None
-            summary["num_videos"] = len(split_rows)
-            summary["num_failed"] = sum(1 for row in split_rows if row["status"] != "ok")
-            writer.writerow(
-                {
-                    key: _format_float(summary[key]) if key in METRIC_NAMES else summary[key]
-                    for key in fieldnames
-                }
-            )
+        summary: dict[str, object] = {}
+        for metric in METRIC_NAMES:
+            values = [_as_float(row.get(metric)) for row in rows]
+            valid = [value for value in values if value is not None]
+            summary[metric] = sum(valid) / len(valid) if valid else None
+        summary["num_videos"] = len(rows)
+        summary["num_failed"] = sum(1 for row in rows if row["status"] != "ok")
+        writer.writerow(
+            {
+                key: _format_float(summary[key]) if key in METRIC_NAMES else summary[key]
+                for key in fieldnames
+            }
+        )
 
 
 def _write_failures(rows: list[dict[str, object]], output_csv: Path) -> None:
@@ -108,4 +103,3 @@ def _write_failures(rows: list[dict[str, object]], output_csv: Path) -> None:
                         "status": row["status"],
                     }
                 )
-

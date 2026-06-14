@@ -100,9 +100,9 @@ outputs/<model_name>/
 └── failed_videos.csv
 ```
 
-`summary_metrics.csv` reports the aggregate CrashTwin-Eval scores for all,
-synthetic, and real-world subsets. Per-video intermediate reconstruction files
-are stored under `outputs/<model_name>/per_video/`.
+`summary_metrics.csv` reports one aggregate CrashTwin-Eval score row.
+Per-video intermediate reconstruction files are stored under
+`outputs/<model_name>/per_video/`.
 
 ## Acknowledgements
 
