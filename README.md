@@ -80,10 +80,11 @@ bash scripts/evaluate.sh \
 `scripts/evaluate.sh` starts the released Docker images with `docker run`. It
 mounts the repository root to `/crashtwin` in each container, so `benchmark/`,
 `checkpoints/`, `predictions/`, and `outputs/` must all live inside the cloned
-repository. Use `--gpus 0` for a single GPU, or pass a comma-separated list such
-as `--gpus 0,1,2,3` for multiple GPUs. For multi-GPU runs, the script splits the
-benchmark rows across GPUs and starts one Docker container per GPU; logs are
-written to `outputs/<model_name>/logs/`.
+repository. The script also mounts `.cache/` to `/cache` so downloaded model hub
+files are reused across runs. Use `--gpus 0` for a single GPU, or pass a
+comma-separated list such as `--gpus 0,1,2,3` for multiple GPUs. For multi-GPU
+runs, the script splits the benchmark rows across GPUs and starts one Docker
+container per GPU; logs are written to `outputs/<model_name>/logs/`.
 
 ## Outputs
 

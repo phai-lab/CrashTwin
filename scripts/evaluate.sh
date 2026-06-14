@@ -88,6 +88,9 @@ run_docker() {
     --shm-size 32g
     -e "NVIDIA_VISIBLE_DEVICES=${host_gpus}"
     -e CRASHTWIN_CACHE=/cache
+    -e TORCH_HOME=/cache/torch
+    -e HF_HOME=/cache/huggingface
+    -e XDG_CACHE_HOME=/cache
     -v "${REPO_ROOT}:/crashtwin"
     -v "${CACHE_DIR}:/cache"
     -w /crashtwin
@@ -123,6 +126,9 @@ launch_docker() {
     --shm-size 32g
     -e "NVIDIA_VISIBLE_DEVICES=${host_gpus}"
     -e CRASHTWIN_CACHE=/cache
+    -e TORCH_HOME=/cache/torch
+    -e HF_HOME=/cache/huggingface
+    -e XDG_CACHE_HOME=/cache
     -v "${REPO_ROOT}:/crashtwin"
     -v "${CACHE_DIR}:/cache"
     -w /crashtwin

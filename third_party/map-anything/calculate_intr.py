@@ -6,6 +6,7 @@ os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 # Required imports
 import sys
 import argparse
+import numpy as np
 import torch
 from mapanything.models import MapAnything
 from mapanything.utils.image import load_images
