@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import math
 import os
 import subprocess
 import sys
@@ -14,6 +15,7 @@ REPO_ROOT = Path("/crashtwin")
 CENTERTRACK = REPO_ROOT / "third_party" / "centertrack"
 DEFAULT_CHECKPOINT_DIR = REPO_ROOT / "checkpoints"
 PYTHON = sys.executable
+PHYSICS_PENALTY = 1.0
 
 
 def parse_args() -> argparse.Namespace:
@@ -77,21 +79,49 @@ def load_json(path: Path) -> dict[str, object]:
         return json.load(handle)
 
 
+def finite_float(value: object) -> float | None:
+    try:
+        result = float(value)
+    except (TypeError, ValueError):
+        return None
+    return result if math.isfinite(result) else None
+
+
+def clipped_physics_metric(value: object) -> float | None:
+    result = finite_float(value)
+    return min(result, PHYSICS_PENALTY) if result is not None else None
+
+
+def physics_metrics_with_penalty(save: Path) -> dict[str, float | None]:
+    flag = load_json(save / "first_contact_flag.json")
+    if flag.get("collided") is False:
+        return {
+            "J_p": PHYSICS_PENALTY,
+            "J_H": PHYSICS_PENALTY,
+            "J_E": PHYSICS_PENALTY,
+        }
+
+    jp = load_json(save / "momentum_j.json")
+    jh = load_json(save / "momentum_jh.json")
+    return {
+        "J_p": clipped_physics_metric(jp.get("j_p")),
+        "J_H": clipped_physics_metric(jh.get("J_H", jh.get("j_p"))),
+        "J_E": clipped_physics_metric(jp.get("j_e")),
+    }
+
+
 def write_metrics(save: Path, video_id: str) -> None:
     st1 = load_json(save / f"{video_id}_st1.json")
     temporal = load_json(save / f"{video_id}_temporal_warp.json")
     apd = load_json(save / f"{video_id}_apd.json")
-    jp = load_json(save / "momentum_j.json")
-    jh = load_json(save / "momentum_jh.json")
+    physics = physics_metrics_with_penalty(save)
     dynamics_path = save / f"step0_instance_dynamics_{video_id}.json"
     dynamics = load_json(dynamics_path) if dynamics_path.is_file() else {}
 
     metrics = {
         "E_flow": st1.get("ST1"),
         "E_warp": temporal.get("E_warp"),
-        "J_p": jp.get("j_p"),
-        "J_H": jh.get("J_H", jh.get("j_p")),
-        "J_E": jp.get("j_e"),
+        **physics,
         "S_ID": dynamics.get("video_metric_weighted"),
         "D_ad": apd.get("apd"),
     }

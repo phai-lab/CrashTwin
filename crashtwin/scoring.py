@@ -2,23 +2,53 @@ from __future__ import annotations
 
 import csv
 import json
+import math
 from pathlib import Path
 
 from .io import BenchmarkItem
 from .metrics import METRIC_NAMES
 
 
+PHYSICS_METRICS = ("J_p", "J_H", "J_E")
+PHYSICS_PENALTY = 1.0
+
+
 def _as_float(value: object) -> float | None:
     if value is None or value == "":
         return None
     try:
-        return float(value)
+        result = float(value)
     except (TypeError, ValueError):
         return None
+    return result if math.isfinite(result) else None
 
 
 def _format_float(value: float | None) -> str:
     return "" if value is None else f"{value:.6g}"
+
+
+def _collision_failed(metrics_path: Path) -> bool:
+    flag_path = metrics_path.parent / "first_contact_flag.json"
+    if not flag_path.is_file():
+        return False
+    try:
+        with flag_path.open("r") as handle:
+            flag = json.load(handle)
+    except (OSError, json.JSONDecodeError):
+        return False
+    return flag.get("collided") is False
+
+
+def _apply_physics_policy(metrics_path: Path, metrics: dict[str, float | None]) -> None:
+    if _collision_failed(metrics_path):
+        for metric in PHYSICS_METRICS:
+            metrics[metric] = PHYSICS_PENALTY
+        return
+
+    for metric in PHYSICS_METRICS:
+        value = metrics.get(metric)
+        if value is not None:
+            metrics[metric] = min(value, PHYSICS_PENALTY)
 
 
 def _read_metrics(metrics_path: Path) -> tuple[dict[str, float | None], str]:
@@ -30,6 +60,9 @@ def _read_metrics(metrics_path: Path) -> tuple[dict[str, float | None], str]:
     metrics_payload = payload.get("metrics", payload)
     status = str(payload.get("status", "ok"))
     metrics = {metric: _as_float(metrics_payload.get(metric)) for metric in METRIC_NAMES}
+    _apply_physics_policy(metrics_path, metrics)
+    if status == "ok" and any(metrics[metric] is None for metric in METRIC_NAMES):
+        status = "missing_metric"
     return metrics, status
 
 
