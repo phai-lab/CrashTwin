@@ -19,8 +19,8 @@ runs inside Docker.
 git clone https://github.com/phai-lab/CrashTwin.git
 cd CrashTwin
 
-docker pull nuochen1203/crashtwin-preprocess:draft-20260614-runtime
-docker pull nuochen1203/crashtwin-reconstruct:draft-20260614-runtime
+docker pull nuochen1203/crashtwin-preprocess:v1.0.0
+docker pull nuochen1203/crashtwin-reconstruct:v1.0.0
 ```
 
 Download the CrashTwin-Eval files and model checkpoints from Hugging Face:
