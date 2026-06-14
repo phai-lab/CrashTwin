@@ -63,7 +63,9 @@ CrashTwin/
 The expected `video_id` values are listed in `benchmark/crashtwin_eval.csv`.
 Generated videos may use any resolution or frame rate; the evaluator normalizes
 them internally. Camera intrinsics are estimated from each input video, so users
-do not need to provide fixed camera parameters.
+do not need to provide fixed camera parameters. SEA-RAFT config files are
+included in this repository under `third_party/SEA-RAFT/config/`; the SEA-RAFT
+checkpoint is provided with the downloaded `checkpoints/` files.
 
 ## Run Evaluation
 

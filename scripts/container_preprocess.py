@@ -71,6 +71,10 @@ def main() -> int:
     require_executable(droid_python, "DROID/Metric3D Python environment")
     require_file(checkpoint_dir / "metric_depth_vit_giant2_800k.pth", "Metric3D checkpoint")
     require_file(checkpoint_dir / "droid.pth", "DROID-SLAM checkpoint")
+    searaft_cfg = THIRD_PARTY / "SEA-RAFT" / "config" / "eval" / "kitti-M.json"
+    searaft_ckpt = checkpoint_dir / "searaft" / "Tartan-C-T-TSKH-kitti432x960-M.pth"
+    require_file(searaft_cfg, "SEA-RAFT config")
+    require_file(searaft_ckpt, "SEA-RAFT checkpoint")
 
     video_ids = read_video_ids(args.benchmark)
     if args.limit is not None:
@@ -195,6 +199,8 @@ def main() -> int:
                 str(save / f"intrinsic_{video_id}.txt"),
                 "--out-poses",
                 str(poses_dir),
+                "--out-traj",
+                str(save / f"{video_id}_trajectory.txt"),
                 "--checkpoint",
                 str(checkpoint_dir / "droid.pth"),
             ],
@@ -221,6 +227,10 @@ def main() -> int:
                 str(work_video),
                 "--flow",
                 "searaft",
+                "--searaft-cfg",
+                str(searaft_cfg),
+                "--searaft-ckpt",
+                str(searaft_ckpt),
                 "--compute-temporal",
                 "--cache-frames",
                 "--output",
