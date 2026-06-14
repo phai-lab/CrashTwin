@@ -1,0 +1,28 @@
+name: crashtwin
+
+services:
+  preprocess:
+    image: nuochen1203/crashtwin-preprocess:${CRASHTWIN_PREPROCESS_TAG:-draft-20260614-env}
+    working_dir: /crashtwin
+    volumes:
+      - ..:/crashtwin
+      - ${CRASHTWIN_CACHE:-../.cache}:/cache
+    environment:
+      NVIDIA_VISIBLE_DEVICES: ${CRASHTWIN_GPUS:-all}
+      CRASHTWIN_CACHE: /cache
+    ipc: host
+    shm_size: "32gb"
+    gpus: all
+
+  reconstruct:
+    image: nuochen1203/crashtwin-reconstruct:${CRASHTWIN_RECONSTRUCT_TAG:-draft-20260613}
+    working_dir: /crashtwin
+    volumes:
+      - ..:/crashtwin
+      - ${CRASHTWIN_CACHE:-../.cache}:/cache
+    environment:
+      NVIDIA_VISIBLE_DEVICES: ${CRASHTWIN_GPUS:-all}
+      CRASHTWIN_CACHE: /cache
+    ipc: host
+    shm_size: "32gb"
+    gpus: all

@@ -1,0 +1,23 @@
+torch == 2.0.1
+torchvision == 0.15.2
+numpy == 1.26.1
+opencv-python   
+gdown
+py3_wget
+tqdm 
+psutil
+# droid slam
+torch-scatter
+open3d
+tensorboard
+scipy
+matplotlib
+pyyaml
+evo
+# metric3d
+xformers == 0.0.21
+mmengine
+mmcv
+timm
+html4vision
+plyfile

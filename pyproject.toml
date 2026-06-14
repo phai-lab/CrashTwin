@@ -1,0 +1,12 @@
+[project]
+name = "crashtwin"
+version = "0.1.0"
+description = "Official CrashTwin benchmark and evaluation code."
+requires-python = ">=3.10"
+dependencies = []
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]

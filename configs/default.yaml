@@ -1,0 +1,30 @@
+benchmark: CrashTwin-344
+
+video:
+  target_fps: 30
+  preserve_duration: true
+
+camera_intrinsics:
+  estimator: MyPonySync
+  frame_sampling: uniform
+
+preprocess:
+  vehicle_mask_estimator: SAM2
+  metric_depth_estimator: default
+  camera_trajectory_estimator: default
+
+reconstruction:
+  vehicle_detector: CenterTrack
+  trajectory_reconstruction: default
+  evaluated_vehicles: 2
+
+scoring:
+  metrics:
+    - E_flow
+    - E_warp
+    - J_p
+    - J_H
+    - J_E
+    - S_ID
+    - D_ad
+
