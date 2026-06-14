@@ -9,4 +9,5 @@ This directory vendors the code paths used by the CrashTwin evaluation pipeline:
 - `centertrack`: 2D/3D vehicle detection and trajectory reconstruction.
 
 Large checkpoints, generated outputs, datasets, and local caches are excluded
-from GitHub. See `ARTIFACTS.md` for the expected artifact layout.
+from GitHub. The required metadata and model-file layout is documented in the
+top-level `README.md`.
