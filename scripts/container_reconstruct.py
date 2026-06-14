@@ -16,6 +16,13 @@ CENTERTRACK = REPO_ROOT / "third_party" / "centertrack"
 DEFAULT_CHECKPOINT_DIR = REPO_ROOT / "checkpoints"
 PYTHON = sys.executable
 PHYSICS_PENALTY = 1.0
+MYOUTPUT_GIF_FPS = 15
+MYOUTPUT_GIF_W = 960
+MYOUTPUT_GIF_H = 540
+MYOUTPUT_INSET_W = 640
+MYOUTPUT_INSET_H = 432
+MYOUTPUT_INSET_X = 640
+MYOUTPUT_INSET_Y = 497
 
 
 def parse_args() -> argparse.Namespace:
@@ -47,6 +54,97 @@ def run(args: list[str], *, cwd: Path | None = None, env: dict[str, str] | None 
     if env:
         merged_env.update(env)
     subprocess.run(args, cwd=cwd, env=merged_env, check=True)
+
+
+def replace_file(src: Path, dst: Path) -> None:
+    if dst.exists():
+        dst.unlink()
+    src.replace(dst)
+
+
+def generate_review_artifacts(save: Path, video_id: str) -> None:
+    base_video = save / f"{video_id}.mp4"
+    kalman_video = save / "step6_kalman_rts_smoothed.mp4"
+    require_file(base_video, "normalized video")
+    require_file(kalman_video, "Kalman-smoothed visualization video")
+
+    out_mp4 = save / f"{video_id}_myoutput.mp4"
+    out_gif = save / f"{video_id}_myoutput.gif"
+    tmp_mp4 = save / f"{video_id}_myoutput.tmp.mp4"
+    tmp_gif = save / f"{video_id}_myoutput.tmp.gif"
+    for path in (tmp_mp4, tmp_gif):
+        if path.exists():
+            path.unlink()
+
+    inset = (
+        f"[1:v]setpts=0.5*PTS,"
+        f"crop={MYOUTPUT_INSET_W}:{MYOUTPUT_INSET_H}:{MYOUTPUT_INSET_X}:{MYOUTPUT_INSET_Y}[inset];"
+        f"[0:v][inset]overlay=0:0:eof_action=pass[vout]"
+    )
+    run(
+        [
+            "ffmpeg",
+            "-y",
+            "-i",
+            str(base_video),
+            "-i",
+            str(kalman_video),
+            "-filter_complex",
+            inset,
+            "-map",
+            "[vout]",
+            "-an",
+            "-c:v",
+            "libx264",
+            "-pix_fmt",
+            "yuv420p",
+            "-preset",
+            "fast",
+            "-crf",
+            "18",
+            "-movflags",
+            "+faststart",
+            str(tmp_mp4),
+        ]
+    )
+    replace_file(tmp_mp4, out_mp4)
+
+    palette_filter = (
+        f"[0:v]fps={MYOUTPUT_GIF_FPS},"
+        f"scale={MYOUTPUT_GIF_W}:{MYOUTPUT_GIF_H}:flags=lanczos,"
+        f"split[v0][v1];[v0]palettegen=reserve_transparent=0[pal];"
+        f"[v1][pal]paletteuse=dither=bayer:bayer_scale=3"
+    )
+    run(
+        [
+            "ffmpeg",
+            "-y",
+            "-i",
+            str(out_mp4),
+            "-filter_complex",
+            palette_filter,
+            "-loop",
+            "0",
+            str(tmp_gif),
+        ]
+    )
+    replace_file(tmp_gif, out_gif)
+
+
+def remove_stale_debug_artifacts(save: Path) -> None:
+    for filename in [
+        "step3_ego_trajectory.mp4",
+        "step3_ego_trajectory_preview.png",
+        "step4_detections_camera.mp4",
+        "step5_detections_world.mp4",
+        "velocity_profiles.png",
+        "angular_velocity_profiles.png",
+        "speed_plot.png",
+        "yaw_plot.png",
+    ]:
+        path = save / filename
+        if path.exists():
+            path.unlink()
 
 
 def read_focal_length(path: Path) -> str:
@@ -162,6 +260,7 @@ def main() -> int:
             raise FileNotFoundError(f"Missing depth directory: {depth_dir}")
 
         focal_length = read_focal_length(intrinsic)
+        remove_stale_debug_artifacts(save)
         run(
             [
                 PYTHON,
@@ -220,6 +319,7 @@ def main() -> int:
                 "--override_dims_step0",
                 "--vehicle_specs_json",
                 str(vehicle_specs),
+                "--skip_debug_videos",
             ],
             cwd=CENTERTRACK,
         )
@@ -268,8 +368,6 @@ def main() -> int:
                 *common,
                 "--j-output",
                 str(save / "momentum_j.json"),
-                "--velocity-plot",
-                str(save / "velocity_profiles.png"),
             ],
             cwd=CENTERTRACK,
         )
@@ -280,8 +378,6 @@ def main() -> int:
                 *common,
                 "--j-output",
                 str(save / "momentum_jh.json"),
-                "--velocity-plot",
-                str(save / "angular_velocity_profiles.png"),
             ],
             cwd=CENTERTRACK,
         )
@@ -312,14 +408,11 @@ def main() -> int:
                 "0",
                 "--output",
                 str(save / "bounds_summary.json"),
-                "--speed-plot",
-                str(save / "speed_plot.png"),
-                "--yaw-plot",
-                str(save / "yaw_plot.png"),
             ],
             cwd=CENTERTRACK,
         )
         write_metrics(save, video_id)
+        generate_review_artifacts(save, video_id)
 
     return 0
 

@@ -2908,7 +2908,17 @@ def visualize_smoothed_trajectories(smoothed_trajectories: Dict[int, Dict[str, L
 # Main function demonstrating the eight-step pipeline
 # ============================================================================
 
-def main(video_id=None, intrinsic_file=None, depth_images_path=None, trajectories_file=None, detections_json=None, savepath=None, override_dims_step0: bool = False, vehicle_specs_json: Optional[str] = None):
+def main(
+    video_id=None,
+    intrinsic_file=None,
+    depth_images_path=None,
+    trajectories_file=None,
+    detections_json=None,
+    savepath=None,
+    override_dims_step0: bool = False,
+    vehicle_specs_json: Optional[str] = None,
+    skip_debug_videos: bool = False,
+):
     print("=" * 70)
     print("EIGHT-STEP TRAJECTORY RECONSTRUCTION PIPELINE")
     print(f"Processing video: {video_id}")
@@ -2990,12 +3000,15 @@ def main(video_id=None, intrinsic_file=None, depth_images_path=None, trajectorie
     # ========================================
     # STEP 3: Visualize ego trajectory
     # ========================================
-    print("\n[STEP 3] Visualizing ego trajectory...")
-    output_video_path = os.path.join(savepath, 'step3_ego_trajectory.mp4')
-    visualize_transformed_objects(transformed_ego,
-                                 output_video=output_video_path,
-                                 fps=10, scale=5.0)
-    print("✓ Ego visualization complete")
+    if skip_debug_videos:
+        print("\n[STEP 3] Skipping ego trajectory debug video")
+    else:
+        print("\n[STEP 3] Visualizing ego trajectory...")
+        output_video_path = os.path.join(savepath, 'step3_ego_trajectory.mp4')
+        visualize_transformed_objects(transformed_ego,
+                                     output_video=output_video_path,
+                                     fps=10, scale=5.0)
+        print("✓ Ego visualization complete")
 
     # ========================================
     # STEP 4: Read and visualize detections
@@ -3048,12 +3061,14 @@ def main(video_id=None, intrinsic_file=None, depth_images_path=None, trajectorie
 
     # ========================================
 
-    # Visualize in original frame
-    output_video_path = os.path.join(savepath, 'step4_detections_camera.mp4')
-    visualize_detections_in_frame(detection_bboxes, detections,
-                                 output_video=output_video_path,
-                                 fps=10, scale=12.0)
-    print("✓ Camera frame visualization complete")
+    if skip_debug_videos:
+        print("✓ Skipped camera frame debug video")
+    else:
+        output_video_path = os.path.join(savepath, 'step4_detections_camera.mp4')
+        visualize_detections_in_frame(detection_bboxes, detections,
+                                     output_video=output_video_path,
+                                     fps=10, scale=12.0)
+        print("✓ Camera frame visualization complete")
 
     # ========================================
     # STEP 5: Transform and visualize in world
@@ -3070,13 +3085,15 @@ def main(video_id=None, intrinsic_file=None, depth_images_path=None, trajectorie
         detection_bboxes, transform_matrices, frame_keys)
     print(f"✓ Transformed detections for {len(transformed_detections)} frames")
 
-    # Visualize in world frame
-    output_video_path = os.path.join(savepath, 'step5_detections_world.mp4')
-    visualize_detections_in_world(transformed_detections, transformed_ego,
-                                 detections, frame_keys,
-                                 output_video=output_video_path,
-                                 fps=10, scale=12.0)
-    print("✓ World frame visualization complete")
+    if skip_debug_videos:
+        print("✓ Skipped world frame debug video")
+    else:
+        output_video_path = os.path.join(savepath, 'step5_detections_world.mp4')
+        visualize_detections_in_world(transformed_detections, transformed_ego,
+                                     detections, frame_keys,
+                                     output_video=output_video_path,
+                                     fps=10, scale=12.0)
+        print("✓ World frame visualization complete")
 
     # ========================================
     # STEP 5.5: Save world frame results as detection format
@@ -3316,10 +3333,13 @@ if __name__ == "__main__":
                        help='If set, override bbox dimensions at Step 0 using vehicle specs JSON')
     parser.add_argument('--vehicle_specs_json', type=str, required=False,
                        help='Path to vehicle specs JSON (default: {savepath}/{video_id}_vehicle_specs.json)')
+    parser.add_argument('--skip_debug_videos', action='store_true',
+                       help='Skip diagnostic step3/step4/step5 videos while keeping JSON outputs and Kalman visualization')
     args = parser.parse_args()
 
     main(video_id=args.video_id, intrinsic_file=args.intrinsic_file,
          depth_images_path=args.depth_images_path, trajectories_file=args.trajectories_file,
          detections_json=args.detections_json, savepath=args.savepath,
          override_dims_step0=args.override_dims_step0,
-         vehicle_specs_json=args.vehicle_specs_json)
+         vehicle_specs_json=args.vehicle_specs_json,
+         skip_debug_videos=args.skip_debug_videos)
