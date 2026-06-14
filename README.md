@@ -138,6 +138,7 @@ preprocessing and reconstruction outputs are stored under
 CrashTwin builds on the following open-source projects:
 
 - [DROID-SLAM](https://github.com/princeton-vl/DROID-SLAM) for camera motion estimation.
+- [droid_metric](https://github.com/Jianxff/droid_metric) for DROID-SLAM and metric-depth integration utilities.
 - [Metric3D](https://github.com/YvanYin/Metric3D) for metric depth reconstruction.
 - [MapAnything](https://github.com/facebookresearch/map-anything) for intrinsic estimation.
 - [SAM 2](https://github.com/facebookresearch/sam2) for video object segmentation.
