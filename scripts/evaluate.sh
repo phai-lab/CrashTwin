@@ -4,8 +4,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
-PREPROCESS_IMAGE="${CRASHTWIN_PREPROCESS_IMAGE:-nuochen1203/crashtwin-preprocess:draft-20260614-runtime}"
-RECONSTRUCT_IMAGE="${CRASHTWIN_RECONSTRUCT_IMAGE:-nuochen1203/crashtwin-reconstruct:draft-20260614-runtime}"
+PREPROCESS_IMAGE="${CRASHTWIN_PREPROCESS_IMAGE:-nuochen1203/crashtwin-preprocess:v1.0.0}"
+RECONSTRUCT_IMAGE="${CRASHTWIN_RECONSTRUCT_IMAGE:-nuochen1203/crashtwin-reconstruct:v1.0.0}"
 CACHE_DIR="${CRASHTWIN_CACHE_DIR:-${REPO_ROOT}/.cache}"
 
 METHOD_NAME=""
