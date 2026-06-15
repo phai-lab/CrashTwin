@@ -1,10 +1,47 @@
-# A Physics-Grounded Benchmark for Multi-Agent Dynamics in World Models
+<div align="center">
 
-[![Paper](https://img.shields.io/badge/Paper-coming_soon-lightgrey)](https://crash-twin.github.io/)
-[![Project Page](https://img.shields.io/badge/Project-Page-green)](https://crash-twin.github.io/)
-[![Benchmark Assets](https://img.shields.io/badge/Benchmark-CrashTwin--Eval-yellow?logo=huggingface)](https://huggingface.co/datasets/nnuochen/crashtwin_eval)
-[![Preprocess Docker](https://img.shields.io/badge/Docker-preprocess-blue?logo=docker)](https://hub.docker.com/r/nuochen1203/crashtwin-preprocess)
-[![Reconstruct Docker](https://img.shields.io/badge/Docker-reconstruct-blue?logo=docker)](https://hub.docker.com/r/nuochen1203/crashtwin-reconstruct)
+# CrashTwin: A Physics-Grounded Benchmark for Multi-Agent Dynamics in World Models
+
+<p>
+  <a href="https://crash-twin.github.io/"><img src="https://img.shields.io/badge/Project-Page-green" alt="Project Page"></a>
+  <a href="https://crash-twin.github.io/"><img src="https://img.shields.io/badge/Paper-coming_soon-lightgrey" alt="Paper"></a>
+  <a href="https://huggingface.co/datasets/nnuochen/crashtwin_eval"><img src="https://img.shields.io/badge/Benchmark-CrashTwin--Eval-yellow?logo=huggingface" alt="Benchmark Assets"></a>
+  <a href="https://hub.docker.com/r/nuochen1203/crashtwin-preprocess"><img src="https://img.shields.io/badge/Docker-preprocess-blue?logo=docker" alt="Preprocess Docker"></a>
+  <a href="https://hub.docker.com/r/nuochen1203/crashtwin-reconstruct"><img src="https://img.shields.io/badge/Docker-reconstruct-blue?logo=docker" alt="Reconstruct Docker"></a>
+</p>
+
+<p>
+  <b>Nuo Chen</b><sup>1*</sup>,
+  <b>Lulin Liu</b><sup>1,2*</sup>,
+  <b>Zihao Li</b><sup>1</sup>,
+  <b>Ziyao Zeng</b><sup>3</sup>,
+  <b>Zihao Zhu</b><sup>1</sup>,
+  <b>Wenyan Cong</b><sup>4</sup>,
+  <b>Junyuan Hong</b><sup>4</sup>,
+  <b>Yunhao Yang</b><sup>4</sup>,
+  <b>Zhengzhong Tu</b><sup>1</sup>,
+  <b>Yan Wang</b><sup>5</sup>,
+  <b>Boris Ivanovic</b><sup>5</sup>,
+  <b>Marco Pavone</b><sup>5,6</sup>,
+  <b>Zhangyang Wang</b><sup>4</sup>,
+  <b>Yang Zhou</b><sup>1</sup>,
+  <b>Zhiwen Fan</b><sup>1</sup>
+  <br>
+  <sup>1</sup>Texas A&amp;M University &nbsp;&nbsp;
+  <sup>2</sup>University of Minnesota &nbsp;&nbsp;
+  <sup>3</sup>Yale University &nbsp;&nbsp;
+  <sup>4</sup>University of Texas at Austin &nbsp;&nbsp;
+  <sup>5</sup>NVIDIA &nbsp;&nbsp;
+  <sup>6</sup>Stanford University
+  <br>
+  <sup>*</sup>Equal contribution.
+</p>
+
+<img src="assets/teaser.png" alt="CrashTwin teaser" width="96%">
+
+</div>
+
+## Overview
 
 Official code for **CrashTwin**, a physics-grounded evaluation framework for
 world-model collision rollouts. Given a model's generated collision videos on
