@@ -12,21 +12,21 @@
 </p>
 
 <p>
-  <b>Nuo Chen</b><sup>1*</sup>,
-  <b>Lulin Liu</b><sup>1,2*</sup>,
-  <b>Zihao Li</b><sup>1</sup>,
-  <b>Ziyao Zeng</b><sup>3</sup>,
-  <b>Zihao Zhu</b><sup>1</sup>,
-  <b>Wenyan Cong</b><sup>4</sup>,
-  <b>Junyuan Hong</b><sup>4</sup>,
-  <b>Yunhao Yang</b><sup>4</sup>,
-  <b>Zhengzhong Tu</b><sup>1</sup>,
-  <b>Yan Wang</b><sup>5</sup>,
-  <b>Boris Ivanovic</b><sup>5</sup>,
-  <b>Marco Pavone</b><sup>5,6</sup>,
-  <b>Zhangyang Wang</b><sup>4</sup>,
-  <b>Yang Zhou</b><sup>1</sup>,
-  <b>Zhiwen Fan</b><sup>1</sup>
+  <a href="https://nuochen1203.github.io/"><b>Nuo Chen</b></a><sup>1*</sup>,
+  <a href="https://lulinliu.github.io/"><b>Lulin Liu</b></a><sup>1,2*</sup>,
+  <a href="https://scholar.google.com/citations?user=7dLezg0AAAAJ&amp;hl=en"><b>Zihao Li</b></a><sup>1</sup>,
+  <a href="https://adonis-galaxy.github.io/homepage/"><b>Ziyao Zeng</b></a><sup>3</sup>,
+  <a href="https://scholar.google.com/citations?user=YfuA8zoAAAAJ&amp;hl=en"><b>Zihao Zhu</b></a><sup>1</sup>,
+  <a href="https://www.wenyancong.com/"><b>Wenyan Cong</b></a><sup>4</sup>,
+  <a href="https://jyhong.gitlab.io/"><b>Junyuan Hong</b></a><sup>4</sup>,
+  <a href="https://yunhaoyang234.github.io/"><b>Yunhao Yang</b></a><sup>4</sup>,
+  <a href="https://vztu.github.io/"><b>Zhengzhong Tu</b></a><sup>1</sup>,
+  <a href="https://yanwang.org/"><b>Yan Wang</b></a><sup>5</sup>,
+  <a href="https://www.borisivanovic.com/"><b>Boris Ivanovic</b></a><sup>5</sup>,
+  <a href="https://web.stanford.edu/~pavone/index.html"><b>Marco Pavone</b></a><sup>5,6</sup>,
+  <a href="https://vita-group.github.io/"><b>Zhangyang Wang</b></a><sup>4</sup>,
+  <a href="https://engineering.tamu.edu/civil/profiles/zhou-yang.html"><b>Yang Zhou</b></a><sup>1</sup>,
+  <a href="https://zhiwenfan.github.io/"><b>Zhiwen Fan</b></a><sup>1</sup>
   <br>
   <sup>1</sup>Texas A&amp;M University &nbsp;&nbsp;
   <sup>2</sup>University of Minnesota &nbsp;&nbsp;
