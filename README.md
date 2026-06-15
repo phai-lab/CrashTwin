@@ -5,7 +5,8 @@
 <p>
   <a href="https://crash-twin.github.io/"><img src="https://img.shields.io/badge/Project-Page-green" alt="Project Page"></a>
   <a href="https://crash-twin.github.io/"><img src="https://img.shields.io/badge/Paper-coming_soon-lightgrey" alt="Paper"></a>
-  <a href="https://huggingface.co/datasets/nnuochen/crashtwin_eval"><img src="https://img.shields.io/badge/Benchmark-CrashTwin--Eval-yellow?logo=huggingface" alt="Benchmark Assets"></a>
+  <a href="https://huggingface.co/datasets/nnuochen/crashtwin_data/blob/main/README.md"><img src="https://img.shields.io/badge/Data-CrashTwin--Data-yellow?logo=huggingface" alt="CrashTwin Data"></a>
+  <a href="https://huggingface.co/datasets/nnuochen/crashtwin_eval"><img src="https://img.shields.io/badge/Eval-CrashTwin--Eval-orange?logo=huggingface" alt="CrashTwin Eval"></a>
   <a href="https://hub.docker.com/r/nuochen1203/crashtwin-preprocess"><img src="https://img.shields.io/badge/Docker-preprocess-blue?logo=docker" alt="Preprocess Docker"></a>
   <a href="https://hub.docker.com/r/nuochen1203/crashtwin-reconstruct"><img src="https://img.shields.io/badge/Docker-reconstruct-blue?logo=docker" alt="Reconstruct Docker"></a>
 </p>
@@ -52,6 +53,11 @@ CrashTwin-Eval contains 300 synthetic and 44 real-world collision videos. Each
 clip contains two collision actors and is evaluated with the same public
 reconstruction-and-scoring protocol.
 
+Use [CrashTwin-Data](https://huggingface.co/datasets/nnuochen/crashtwin_data/blob/main/README.md)
+for training and post-training data. Use
+[CrashTwin-Eval](https://huggingface.co/datasets/nnuochen/crashtwin_eval) for
+the fixed 344-scenario evaluation set used for quantitative benchmarking.
+
 ## Release Scope
 
 This repository provides the public CrashTwin evaluation pipeline:
@@ -82,9 +88,14 @@ The Docker images are hosted on Docker Hub:
 - Preprocessing image: https://hub.docker.com/r/nuochen1203/crashtwin-preprocess
 - Reconstruction image: https://hub.docker.com/r/nuochen1203/crashtwin-reconstruct
 
-## Required Assets
+## Datasets and Required Assets
 
-Download the CrashTwin-Eval files from Hugging Face:
+Training and post-training data are released separately as CrashTwin-Data:
+
+https://huggingface.co/datasets/nnuochen/crashtwin_data/blob/main/README.md
+
+To run the public evaluation protocol, download the CrashTwin-Eval files used
+for quantitative benchmarking from Hugging Face:
 
 https://huggingface.co/datasets/nnuochen/crashtwin_eval
 
