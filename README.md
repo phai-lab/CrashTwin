@@ -1,4 +1,4 @@
-# A Physics-Grounded Evaluation for Collision Rollouts
+# A Physics-Grounded Benchmark for Multi-Agent Dynamics in World Models
 
 [![Paper](https://img.shields.io/badge/Paper-coming_soon-lightgrey)](https://crash-twin.github.io/)
 [![Project Page](https://img.shields.io/badge/Project-Page-green)](https://crash-twin.github.io/)
