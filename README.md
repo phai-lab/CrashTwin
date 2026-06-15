@@ -58,18 +58,6 @@ for training and post-training data. Use
 [CrashTwin-Eval](https://huggingface.co/datasets/nnuochen/crashtwin_eval) for
 the fixed 344-scenario evaluation set used for quantitative benchmarking.
 
-## Release Scope
-
-This repository provides the public CrashTwin evaluation pipeline:
-
-1. normalize generated videos and estimate camera intrinsics,
-2. run the reconstruction stack inside the released Docker environments,
-3. compute per-video and aggregate CrashTwin-Eval metrics.
-
-The release does not include generated videos from any evaluated method. To score
-a method, place that method's generated videos under `predictions/<model_name>/`
-using the benchmark `video_id` names.
-
 ## Installation
 
 The host machine needs Bash, Docker, NVIDIA Container Toolkit, and
@@ -88,7 +76,7 @@ The Docker images are hosted on Docker Hub:
 - Preprocessing image: https://hub.docker.com/r/nuochen1203/crashtwin-preprocess
 - Reconstruction image: https://hub.docker.com/r/nuochen1203/crashtwin-reconstruct
 
-## Datasets and Required Assets
+## Data Preparation
 
 Training and post-training data are released separately as CrashTwin-Data:
 
@@ -118,8 +106,8 @@ unzip checkpoints/checkpoints.zip -d .
 
 ## Data Layout
 
-After downloading the benchmark assets and adding one model's generated videos,
-the repository should look like this:
+After downloading CrashTwin-Eval and adding one model's generated videos, the
+repository should look like this:
 
 ```text
 CrashTwin/
