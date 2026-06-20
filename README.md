@@ -118,7 +118,6 @@ CrashTwin/
 │   └── vehicle_specs/
 │       └── <video_id>_vehicle_specs.json
 ├── checkpoints/
-│   ├── checkpoints.zip
 │   ├── droid.pth
 │   ├── metric_depth_vit_giant2_800k.pth
 │   ├── nuScenes_3Dtracking.pth
