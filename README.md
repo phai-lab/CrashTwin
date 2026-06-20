@@ -183,8 +183,7 @@ preprocessing and reconstruction outputs are stored under
 
 Each completed per-video folder keeps the JSON files used for scoring, the
 bounding-box anchor PNG, the tracking/SAM2 videos, the Kalman-smoothed
-trajectory video, and the old-style `<video_id>_myoutput.mp4` /
-`<video_id>_myoutput.gif` visualization.
+trajectory video, and the visualization.
 
 ## Acknowledgements
 
