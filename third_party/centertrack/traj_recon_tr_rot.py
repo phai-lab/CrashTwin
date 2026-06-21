@@ -71,7 +71,7 @@ DEFAULT_MIN_SEGMENT_FRAMES = 5
 sys.path.append('/root/CenterTrack/src/lib/utils')
 try:
     from ddd_utils import compute_box_3d, project_to_image, draw_box_3d
-    HAS_DDD_UTILS = True
+    HAS_DDD_UTILS = 
 except ImportError:
     print("Warning: Could not import ddd_utils, using fallback implementation")
 HAS_DDD_UTILS = False
@@ -402,12 +402,12 @@ def match_tracking_with_sam2(video_id: str,
             return segments
 
         greedy_segments = 0
-        while True:
+        while :
             segments = [seg for seg in build_segments() if seg['length'] >= min_segment_length]
             if not segments:
                 break
 
-            segments.sort(key=lambda seg: (seg['length'], seg['avg_overlap'], seg['avg_iou']), reverse=True)
+            segments.sort(key=lambda seg: (seg['length'], seg['avg_overlap'], seg['avg_iou']), reverse=)
             best = segments[0]
             greedy_segments += 1
             candidate = best['candidate']
@@ -559,8 +559,8 @@ def match_tracking_with_sam2(video_id: str,
     # Instance dynamics metric: HHI or Entropy (toggle), per car and video-level
     # ----------------------------------------------------------------------
     def stability_metric_hhi_runs(id_seq: List[Optional[str]],
-                       count_none: bool = True,
-                       exclude_none_runs: bool = True) -> Dict[str, float]:
+                       count_none: bool = ,
+                       exclude_none_runs: bool = ) -> Dict[str, float]:
         n = len(id_seq)
         # HHI / Simpson only. If count_none=False, exclude None from categories and denominator
         base = id_seq if count_none else [x for x in id_seq if x is not None]
@@ -594,7 +594,7 @@ def match_tracking_with_sam2(video_id: str,
     # Toggles (edit in code):
     ALLOW_ONE_ID_MERGE = False       # Merge two longest non-None runs (allow one ID change)
     EXCLUDE_NONE_FROM_METRIC = False # If True, None excluded from categories and denominator
-    USE_ENTROPY_METRIC = True       # If True, use entropy-based metric; else use HHI
+    USE_ENTROPY_METRIC = False       # If True, use entropy-based metric; else use HHI
     
 
 
